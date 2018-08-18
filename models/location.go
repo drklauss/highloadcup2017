@@ -1,6 +1,12 @@
 package models
 
-import "sync"
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"sync"
+	"time"
+)
 
 type Location struct {
 	Id       uint32 `json:"id"`
@@ -14,6 +20,12 @@ type Location struct {
 type Locations struct {
 	mx sync.RWMutex
 	m  map[uint32]*Location
+}
+
+func (ls *Locations) Init() *Locations {
+	ls.m = make(map[uint32]*Location)
+	ls.readData()
+	return ls
 }
 
 func (ls *Locations) Get(id uint32) *Location {
@@ -33,4 +45,31 @@ func (ls *Locations) Update(id uint32, l *Location) {
 	l.Id = id
 	ls.m[id] = l
 	ls.mx.Unlock()
+}
+
+func (ls *Locations) readData() {
+	t := time.Now()
+	count := 1
+	for {
+		fName := fmt.Sprintf("data/locations_%d.json", count)
+		fmt.Println(fName)
+		b, err := ioutil.ReadFile(fName)
+		if err != nil {
+			println(err.Error())
+			break
+		}
+		var locations struct {
+			Locations []Location `json:"locations"`
+		}
+		err = json.Unmarshal(b, &locations)
+		if err != nil {
+			fmt.Println(err.Error())
+			break
+		}
+		for _, l := range locations.Locations {
+			ls.m[l.Id] = &l
+		}
+		count++
+	}
+	fmt.Printf("All Locs: %d\nLocations Time: %+v\n", len(ls.m), time.Since(t))
 }

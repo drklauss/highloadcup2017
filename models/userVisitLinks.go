@@ -8,6 +8,11 @@ type UserVisitLinks struct {
 	m  map[uint32][]uint32
 }
 
+func (uvl *UserVisitLinks) Init() *UserVisitLinks {
+	uvl.m = make(map[uint32][]uint32)
+	return uvl
+}
+
 // Get возвращает []visitId
 func (uvl *UserVisitLinks) Get(userId uint32) []uint32 {
 	uvl.mx.RLock()

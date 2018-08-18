@@ -8,6 +8,11 @@ type LocationVisitLinks struct {
 	m  map[uint32][]uint32
 }
 
+func (lvl *LocationVisitLinks) Init() *LocationVisitLinks {
+	lvl.m = make(map[uint32][]uint32)
+	return lvl
+}
+
 func (lvl *LocationVisitLinks) Get(locId uint32) []uint32 {
 	lvl.mx.RLock()
 	defer lvl.mx.RUnlock()
