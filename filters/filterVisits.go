@@ -32,8 +32,8 @@ func (tdf *fromDateFilter) filter(v *models.Visit) bool {
 	return v.VisitedAt > tdf.fromDate
 }
 
-// NewVisitFilter создает экземпляр фильтра
-func NewVisitFilter(ctx *fasthttp.RequestCtx) *FilterVisits {
+// NewVisitsFilter создает экземпляр фильтра
+func NewVisitsFilter(ctx *fasthttp.RequestCtx) *FilterVisits {
 	f := new(FilterVisits)
 	fd := ctx.QueryArgs().Peek("fromDate")
 	td := ctx.QueryArgs().Peek("toDate")

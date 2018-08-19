@@ -8,7 +8,6 @@ import (
 	"time"
 )
 
-// todo при вычитывании данных визита предусмотреть сохранение в таблицу locationVisitLinks и userVisitLinks
 type Visit struct {
 	Id        uint32 `json:"id"`
 	Location  uint32 `json:"location"`
