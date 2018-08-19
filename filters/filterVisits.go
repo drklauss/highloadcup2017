@@ -33,23 +33,29 @@ func (tdf *fromDateFilter) filter(v *models.Visit) bool {
 }
 
 // NewVisitsFilter создает экземпляр фильтра
-func NewVisitsFilter(ctx *fasthttp.RequestCtx) *FilterVisits {
+func NewVisitsFilter(ctx *fasthttp.RequestCtx) (*FilterVisits, error) {
 	f := new(FilterVisits)
-	fd := ctx.QueryArgs().Peek("fromDate")
-	td := ctx.QueryArgs().Peek("toDate")
-	if len(fd) > 0 {
-		fTime, _ := strconv.Atoi(string(fd))
+	if ctx.QueryArgs().Has("fromDate") {
+		fd := ctx.QueryArgs().Peek("fromDate")
+		fTime, err := strconv.Atoi(string(fd))
+		if err != nil {
+			return nil, err
+		}
 		tdf := new(fromDateFilter)
 		tdf.fromDate = uint32(fTime)
 		f.ffs = append(f.ffs, tdf)
 	}
-	if len(td) > 0 {
-		tTime, _ := strconv.Atoi(string(td))
+	if ctx.QueryArgs().Has("toDate") {
+		td := ctx.QueryArgs().Peek("toDate")
+		tTime, err := strconv.Atoi(string(td))
+		if err != nil {
+			return nil, err
+		}
 		tdf := new(toDateFilter)
 		tdf.toDate = uint32(tTime)
 		f.ffs = append(f.ffs, tdf)
 	}
-	return f
+	return f, nil
 }
 
 // Run запускает систему фильтров

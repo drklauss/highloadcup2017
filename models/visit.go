@@ -45,10 +45,9 @@ func (vs *Visits) Save(v *Visit) {
 	vs.mx.Unlock()
 }
 
-func (vs *Visits) Update(id uint32, v *Visit) {
+func (vs *Visits) Update(v *Visit) {
 	vs.mx.Lock()
-	v.Id = id
-	vs.m[id] = *v
+	vs.m[v.Id] = *v
 	vs.mx.Unlock()
 }
 

@@ -44,10 +44,9 @@ func (us *Users) Save(u *User) {
 	us.mx.Unlock()
 }
 
-func (us *Users) Update(id uint32, u *User) {
+func (us *Users) Update(u *User) {
 	us.mx.Lock()
-	u.Id = id
-	us.m[id] = *u
+	us.m[u.Id] = *u
 	us.mx.Unlock()
 }
 

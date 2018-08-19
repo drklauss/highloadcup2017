@@ -10,10 +10,22 @@ import (
 
 func GetUserVisits(ctx *fasthttp.RequestCtx) {
 	id, _ := strconv.Atoi(ctx.UserValue("id").(string))
-	fv := filters.NewVisitsFilter(ctx)
-	fl := filters.NewLocationsFilter(ctx)
+	u := models.UCache.Get(uint32(id))
+	if u == nil {
+		ctx.SetStatusCode(fasthttp.StatusNotFound)
+		return
+	}
+	fv, err := filters.NewVisitsFilter(ctx)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusBadRequest)
+		return
+	}
+	fl, err := filters.NewLocationsFilter(ctx)
+	if err != nil {
+		ctx.SetStatusCode(fasthttp.StatusBadRequest)
+		return
+	}
 	vs := models.UvlCache.Get(uint32(id))
-
 	resp := new(models.VisitStats)
 	visitStat := new(models.VisitStat)
 	oneVisit := new(models.Visit)

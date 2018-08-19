@@ -7,11 +7,11 @@ import (
 	"strconv"
 )
 
-func GetUser(ctx *fasthttp.RequestCtx) {
+func GetLocation(ctx *fasthttp.RequestCtx) {
 	id, _ := strconv.Atoi(ctx.UserValue("id").(string))
-	u := models.UCache.Get(uint32(id))
+	u := models.LocCache.Get(uint32(id))
 	if u == nil {
-		ctx.Error("Not Found", fasthttp.StatusNotFound)
+		ctx.SetStatusCode(fasthttp.StatusNotFound)
 		return
 	}
 	m, _ := json.Marshal(u)

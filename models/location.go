@@ -43,10 +43,9 @@ func (ls *Locations) Save(l *Location) {
 	ls.mx.Unlock()
 }
 
-func (ls *Locations) Update(id uint32, l *Location) {
+func (ls *Locations) Update(l *Location) {
 	ls.mx.Lock()
-	l.Id = id
-	ls.m[id] = *l
+	ls.m[l.Id] = *l
 	ls.mx.Unlock()
 }
 

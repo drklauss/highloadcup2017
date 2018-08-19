@@ -13,14 +13,14 @@ func main() {
 	// Пользователи
 	router.GET("/users/:id", jsonResponse(handlers.GetUser))
 	router.GET("/users/:id/visits", jsonResponse(handlers.GetUserVisits))
-	router.POST("/users/:param", jsonResponse(handlers.GetUser))
+	router.POST("/users/:param", jsonResponse(handlers.CreateUpdateUser))
 	// Достопримечательности
-	router.GET("/locations/:id", jsonResponse(handlers.GetUser))
-	router.POST("/locations/:param", jsonResponse(handlers.GetUser))
-	router.GET("/locations/:id/avg", jsonResponse(handlers.GetUser))
+	router.GET("/locations/:id", jsonResponse(handlers.GetLocation))
+	router.POST("/locations/:param", jsonResponse(handlers.CreateUpdateLocation))
+	router.GET("/locations/:id/avg", jsonResponse(handlers.GetUser)) // todo
 	// Посещения
-	router.GET("/visits/:id", jsonResponse(handlers.GetUser))
-	router.POST("/visits/:param", jsonResponse(handlers.GetUser))
+	router.GET("/visits/:id", jsonResponse(handlers.GetVisit))
+	router.POST("/visits/:param", jsonResponse(handlers.CreateUpdateVisit))
 
 	panic(fasthttp.ListenAndServe(":8080", router.Handler))
 }
