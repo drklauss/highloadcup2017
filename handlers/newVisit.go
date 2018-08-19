@@ -14,7 +14,7 @@ func NewVisit(ctx *fasthttp.RequestCtx) {
 	if err != nil {
 		fmt.Printf("%+v", err.Error())
 	}
-	models.VCache.Save(&v)
+	models.UvlCache.Get(v.User)
 	fmt.Printf("\n%+v", models.UvlCache.Get(v.User))
 	fmt.Printf("\n%+v", models.LvlCache.Get(v.Location))
 }

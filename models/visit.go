@@ -20,11 +20,11 @@ type Visit struct {
 // Кэш данных посещений
 type Visits struct {
 	mx sync.RWMutex
-	m  map[uint32]*Visit
+	m  map[uint32]Visit
 }
 
 func (vs *Visits) Init() *Visits {
-	vs.m = make(map[uint32]*Visit)
+	vs.m = make(map[uint32]Visit)
 	vs.readData()
 	return vs
 }
@@ -32,12 +32,15 @@ func (vs *Visits) Init() *Visits {
 func (vs *Visits) Get(id uint32) *Visit {
 	vs.mx.RLock()
 	defer vs.mx.RUnlock()
-	return vs.m[id]
+	if v, ok := vs.m[id]; ok {
+		return &v
+	}
+	return nil
 }
 
 func (vs *Visits) Save(v *Visit) {
 	vs.mx.Lock()
-	vs.m[v.Id] = v
+	vs.m[v.Id] = *v
 	UvlCache.Save(v.User, v.Id)     // проверить
 	LvlCache.Save(v.Location, v.Id) // проверить
 	vs.mx.Unlock()
@@ -46,7 +49,7 @@ func (vs *Visits) Save(v *Visit) {
 func (vs *Visits) Update(id uint32, v *Visit) {
 	vs.mx.Lock()
 	v.Id = id
-	vs.m[id] = v
+	vs.m[id] = *v
 	vs.mx.Unlock()
 }
 
@@ -70,7 +73,9 @@ func (vs *Visits) readData() {
 			break
 		}
 		for _, v := range visits.Visits {
-			vs.m[v.Id] = &v
+			LvlCache.Save(v.Location, v.Id)
+			UvlCache.Save(v.User, v.Id)
+			vs.m[v.Id] = v
 		}
 		count++
 	}

@@ -19,11 +19,11 @@ type Location struct {
 // Кэш данных достопримечательностей
 type Locations struct {
 	mx sync.RWMutex
-	m  map[uint32]*Location
+	m  map[uint32]Location
 }
 
 func (ls *Locations) Init() *Locations {
-	ls.m = make(map[uint32]*Location)
+	ls.m = make(map[uint32]Location)
 	ls.readData()
 	return ls
 }
@@ -31,19 +31,22 @@ func (ls *Locations) Init() *Locations {
 func (ls *Locations) Get(id uint32) *Location {
 	ls.mx.RLock()
 	defer ls.mx.RUnlock()
-	return ls.m[id]
+	if v, ok := ls.m[id]; ok {
+		return &v
+	}
+	return nil
 }
 
 func (ls *Locations) Save(l *Location) {
 	ls.mx.Lock()
-	ls.m[l.Id] = l
+	ls.m[l.Id] = *l
 	ls.mx.Unlock()
 }
 
 func (ls *Locations) Update(id uint32, l *Location) {
 	ls.mx.Lock()
 	l.Id = id
-	ls.m[id] = l
+	ls.m[id] = *l
 	ls.mx.Unlock()
 }
 
@@ -67,7 +70,7 @@ func (ls *Locations) readData() {
 			break
 		}
 		for _, l := range locations.Locations {
-			ls.m[l.Id] = &l
+			ls.m[l.Id] = l
 		}
 		count++
 	}

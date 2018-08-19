@@ -21,7 +21,6 @@ func main() {
 	router.GET("/locations/:id", handlers.GetUser)
 	router.GET("/locations/:id/avg", handlers.GetUser)
 	router.GET("/visits/:id", handlers.GetUser)
-
 	router.POST("/visits/new", handlers.NewVisit)
 
 	panic(fasthttp.ListenAndServe(":8080", router.Handler))

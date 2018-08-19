@@ -20,11 +20,11 @@ type User struct {
 // Кэш данных пользователей
 type Users struct {
 	mx sync.RWMutex
-	m  map[uint32]*User
+	m  map[uint32]User
 }
 
 func (us *Users) Init() *Users {
-	us.m = make(map[uint32]*User)
+	us.m = make(map[uint32]User)
 	us.readData()
 	return us
 }
@@ -33,27 +33,30 @@ func (us *Users) Get(id uint32) *User {
 	us.mx.RLock()
 	defer us.mx.RUnlock()
 	if v, ok := us.m[id]; ok {
-		return v
+		return &v
 	}
 	return nil
 }
 
 func (us *Users) Save(u *User) {
 	us.mx.Lock()
-	us.m[u.Id] = u
+	us.m[u.Id] = *u
 	us.mx.Unlock()
 }
 
 func (us *Users) Update(id uint32, u *User) {
 	us.mx.Lock()
 	u.Id = id
-	us.m[id] = u
+	us.m[id] = *u
 	us.mx.Unlock()
 }
 
 func (us *Users) readData() {
 	t := time.Now()
 	count := 1
+	type users struct {
+		Users []User `json:"users"`
+	}
 	for {
 		fName := fmt.Sprintf("data/users_%d.json", count)
 		fmt.Println(fName)
@@ -62,16 +65,14 @@ func (us *Users) readData() {
 			println(err.Error())
 			break
 		}
-		var users struct {
-			Users []User `json:"users"`
-		}
+		var users users
 		err = json.Unmarshal(b, &users)
 		if err != nil {
 			fmt.Println(err.Error())
 			break
 		}
 		for _, u := range users.Users {
-			us.m[u.Id] = &u
+			us.m[u.Id] = u
 		}
 		count++
 	}
