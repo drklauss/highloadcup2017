@@ -17,7 +17,7 @@ func main() {
 	// Достопримечательности
 	router.GET("/locations/:id", jsonResponse(handlers.GetLocation))
 	router.POST("/locations/:param", jsonResponse(handlers.CreateUpdateLocation))
-	router.GET("/locations/:id/avg", jsonResponse(handlers.GetUser)) // todo
+	router.GET("/locations/:id/avg", jsonResponse(handlers.GetLocationAvgMark))
 	// Посещения
 	router.GET("/visits/:id", jsonResponse(handlers.GetVisit))
 	router.POST("/visits/:param", jsonResponse(handlers.CreateUpdateVisit))

@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 )
 
@@ -18,27 +19,30 @@ var (
 )
 
 func Init() {
-	unzipData()
+	//err := unzipData()
+	//if err != nil {
+	//	panic("cannot read data")
+	//}
 	// Таблицы связей
 	t := time.Now()
 	UvlCache = new(UserVisitLinks).Init()
 	LvlCache = new(LocationVisitLinks).Init()
 	// Основные таблицы
-	//var wg sync.WaitGroup
-	//wg.Add(3)
-	//go func() {
-	LocCache = new(Locations).Init()
-	//wg.Done()
-	//}()
-	//go func() {
-	UCache = new(Users).Init()
-	//wg.Done()
-	//}()
-	//go func() {
-	VCache = new(Visits).Init()
-	//wg.Done()
-	//}()
-	//wg.Wait()
+	var wg sync.WaitGroup
+	wg.Add(3)
+	go func() {
+		LocCache = new(Locations).Init()
+		wg.Done()
+	}()
+	go func() {
+		UCache = new(Users).Init()
+		wg.Done()
+	}()
+	go func() {
+		VCache = new(Visits).Init()
+		wg.Done()
+	}()
+	wg.Wait()
 	fmt.Printf("All data: %+v", time.Since(t))
 }
 
@@ -90,12 +94,12 @@ func unzipData() error {
 		}
 		return nil
 	}
+	for k, f := range r.File {
+		extractAndWriteFile(f)
+	}
 
 	for _, f := range r.File {
-		err := extractAndWriteFile(f)
-		if err != nil {
-			return err
-		}
+		extractAndWriteFile(f)
 	}
 
 	return nil

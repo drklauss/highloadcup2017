@@ -41,9 +41,9 @@ func NewVisitsFilter(ctx *fasthttp.RequestCtx) (*FilterVisits, error) {
 		if err != nil {
 			return nil, err
 		}
-		tdf := new(fromDateFilter)
-		tdf.fromDate = uint32(fTime)
-		f.ffs = append(f.ffs, tdf)
+		fdf := new(fromDateFilter)
+		fdf.fromDate = uint32(fTime)
+		f.ffs = append(f.ffs, fdf)
 	}
 	if ctx.QueryArgs().Has("toDate") {
 		td := ctx.QueryArgs().Peek("toDate")
